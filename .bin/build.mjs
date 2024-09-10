@@ -48,28 +48,6 @@ try {
   console.log(chalk.cyan('Copy README.md'));
   await $`cp README.md dist/README.md`;
 
-  // Compile sub package "testing"
-  console.log(chalk.yellow('Compiling testing utilities'))
-  await $`npx tsc -p tsconfig.testing.json --outDir dist/testing`;
-
-  const npmTestingPackageJson = {
-    name: workspacePackageJson.name,
-    description: 'Testing utilities',
-    version: workspacePackageJson.version,
-    author: workspacePackageJson.author,
-    keywords: workspacePackageJson.keywords,
-    license: workspacePackageJson.license,
-    url: workspacePackageJson.url,
-    repository: workspacePackageJson.repository,
-    main: 'testing/index.js',
-  };
-
-  await fs.promises.writeFile(
-    'dist/testing/package.json',
-    JSON.stringify(npmTestingPackageJson, null, 2),
-  );
-
-
   console.log(chalk.green('Compilation successful'));
 } catch (error) {
   console.log(error);

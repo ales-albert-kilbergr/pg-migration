@@ -1,9 +1,16 @@
 import { QueryRunner, type Datasource } from '@kilbergr/pg-datasource';
-import { MigrationRepository } from './migration-repository';
 import { MigrationDirection } from './migration';
 import { MigrationResult } from './migration-result';
 import type { MigrationList } from './migration-list';
 import type { MigrationLogger } from './migration-logger';
+import {
+  CreateMigrationTableQuery,
+  FindLatestSequenceNumberQuery,
+  InsertMigrationQuery,
+} from './queries';
+import * as E from 'fp-ts/lib/Either';
+import type { DatabaseError } from 'pg';
+import type { ValidationError } from 'joi';
 
 // Random but well-known identifier shared by all instances.
 const PG_MIGRATE_LOCK_ID = 708954078;
@@ -49,6 +56,7 @@ export class MigrationRunner {
 
   private readonly migrationLogger: MigrationLogger;
 
+  // eslint-disable-next-line @typescript-eslint/max-params
   public constructor(
     datasource: Datasource,
     config: MigrationRunner.Config,
@@ -61,7 +69,9 @@ export class MigrationRunner {
     this.migrationLogger = logger;
   }
 
-  public async run(targetSeqNum = Infinity): Promise<MigrationResult> {
+  public async run(
+    targetSeqNum = Infinity,
+  ): Promise<E.Either<DatabaseError | ValidationError, MigrationResult>> {
     // Create isolated query runner for the migration only.
     // We check if a migration is already running by another instance. If
     // yes, we will wait until it ends and then we will check what is the
@@ -72,20 +82,32 @@ export class MigrationRunner {
     // this migration will skip all already executed steps.
     const lock = this.datasource.createAdvisorLock(PG_MIGRATE_LOCK_ID);
     const queryRunner = this.datasource.createQueryRunner();
-    const migrationRepository = queryRunner.createRepository(
-      MigrationRepository,
-      this.config,
-    );
-
-    new MigrationRepository(queryRunner, this.config);
 
     await lock.lock();
 
     // Create migration schema and tables if not exists.
-    await migrationRepository.createTableIfNotExists();
+    const createMigrationTableResult = await queryRunner
+      .prepare(CreateMigrationTableQuery)
+      .setArgs({
+        schema: this.config.schema,
+        table: this.config.table,
+      })
+      .execute();
 
-    const latestSequenceNumber =
-      await migrationRepository.findLatestSequenceNumber();
+    if (E.isLeft(createMigrationTableResult)) {
+      return createMigrationTableResult;
+    }
+
+    const latestSequenceNumberResult = await queryRunner
+      .prepare(FindLatestSequenceNumberQuery)
+      .setArgs(this.config)
+      .execute();
+
+    if (E.isLeft(latestSequenceNumberResult)) {
+      return latestSequenceNumberResult;
+    }
+
+    const latestSequenceNumber = latestSequenceNumberResult.right;
 
     // Resolve what is targeted migration. It can be all migrations with
     // greater seq number than the last stored one or any other specific
@@ -151,12 +173,22 @@ export class MigrationRunner {
         }
       }
 
-      await migrationRepository.insert(
-        result.executed.map((m) => ({
-          ...m,
-          direction: MigrationDirection.UP,
-        })) as any,
-      );
+      const migrationInsertResult = await queryRunner
+        .prepare(InsertMigrationQuery)
+        .setArgs({
+          table: this.config.table,
+          schema: this.config.schema,
+          migrations: result.executed.map((m) => ({
+            ...m,
+            duration: m.duration ?? 0,
+            direction: MigrationDirection.UP,
+          })),
+        })
+        .execute();
+
+      if (E.isLeft(migrationInsertResult)) {
+        return migrationInsertResult;
+      }
     } else {
       // Running DOWN which means that the last stored seq number is greater
       // than the target seq number. We need to run all migrations with seq
@@ -207,18 +239,28 @@ export class MigrationRunner {
         }
       }
 
-      await migrationRepository.insert(
-        result.executed.map((m) => ({
-          ...m,
-          direction: MigrationDirection.DOWN,
-        })) as any,
-      );
+      const migrationInsertResult = await queryRunner
+        .prepare(InsertMigrationQuery)
+        .setArgs({
+          table: this.config.table,
+          schema: this.config.schema,
+          migrations: result.executed.map((m) => ({
+            ...m,
+            duration: m.duration ?? 0,
+            direction: MigrationDirection.DOWN,
+          })),
+        })
+        .execute();
+
+      if (E.isLeft(migrationInsertResult)) {
+        return migrationInsertResult;
+      }
     }
 
     await queryRunner.commitTransaction();
 
     await lock.unlock();
 
-    return result;
+    return E.right(result);
   }
 }

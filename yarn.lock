@@ -424,6 +424,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hapi/hoek@npm:^9.0.0, @hapi/hoek@npm:^9.3.0":
+  version: 9.3.0
+  resolution: "@hapi/hoek@npm:9.3.0"
+  checksum: 10/ad83a223787749f3873bce42bd32a9a19673765bf3edece0a427e138859ff729469e68d5fdf9ff6bbee6fb0c8e21bab61415afa4584f527cfc40b59ea1957e70
+  languageName: node
+  linkType: hard
+
+"@hapi/topo@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "@hapi/topo@npm:5.1.0"
+  dependencies:
+    "@hapi/hoek": "npm:^9.0.0"
+  checksum: 10/084bfa647015f4fd3fdd51fadb2747d09ef2f5e1443d6cbada2988b0c88494f85edf257ec606c790db146ac4e34ff57f3fcb22e3299b8e06ed5c87ba7583495c
+  languageName: node
+  linkType: hard
+
 "@humanwhocodes/config-array@npm:^0.11.14":
   version: 0.11.14
   resolution: "@humanwhocodes/config-array@npm:0.11.14"
@@ -765,17 +781,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@kilbergr/pg-datasource@npm:^0.1.0-Dev.9":
-  version: 0.1.0-Dev.9
-  resolution: "@kilbergr/pg-datasource@npm:0.1.0-Dev.9"
+"@kilbergr/pg-datasource@npm:^0.1.0-Dev.25":
+  version: 0.1.0-Dev.25
+  resolution: "@kilbergr/pg-datasource@npm:0.1.0-Dev.25"
   peerDependencies:
-    "@kilbergr/pg-sql": ^0.1.0-Dev.5
+    "@kilbergr/pg-sql": ^0.1.0-Dev.17
     "@kilbergr/string": ^0.1.0-Dev.1
     "@kilbergr/tagged-types": ^0.1.0-Alpha.3
     class-transformer: ^0.5.1
+    fp-ts: ^2.16.9
+    joi: ^17.13.3
     pg: ^8.12.0
     rxjs: ^7.8.1
-  checksum: 10/d9ae17b7ecc698199943e12cc33453d0ca215807c914aec0563edd77ab05b964aca8e3d8775a6c456aa2e13494ae54b9b9b41232b30373c7a3a266546d6f9048
+  checksum: 10/4ea24c9a9ddcaeaaab3af799e87c43d44eaf7ae0e151dbdf54bc00330c887033273f8cd69719d05aae45bf37bc908053797f9e5775954a08270de05fb6a6a404
   languageName: node
   linkType: hard
 
@@ -783,9 +801,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@kilbergr/pg-migration@workspace:."
   dependencies:
-    "@kilbergr/pg-datasource": "npm:^0.1.0-Dev.9"
-    "@kilbergr/pg-sql": "npm:^0.1.0-Dev.12"
-    "@kilbergr/pg-testing": "npm:^0.1.0-Dev.2"
+    "@kilbergr/pg-datasource": "npm:^0.1.0-Dev.25"
+    "@kilbergr/pg-sql": "npm:^0.1.0-Dev.17"
+    "@kilbergr/pg-testing": "npm:^0.1.0-Dev.3"
     "@kilbergr/string": "npm:^0.1.0-Dev.1"
     "@kilbergr/tagged-types": "npm:^0.1.0-Alpha.4"
     "@types/jest": "npm:^29.5.12"
@@ -801,8 +819,10 @@ __metadata:
     eslint: "npm:^8.57.0"
     eslint-config-prettier: "npm:^9.1.0"
     eslint-plugin-import: "npm:^2.29.1"
+    fp-ts: "npm:^2.16.9"
     jest: "npm:^29.7.0"
     jest-mock-extended: "npm:^3.0.7"
+    joi: "npm:^17.13.3"
     jsonwebtoken: "npm:^9.0.2"
     pg: "npm:^8.12.0"
     prettier: "npm:^3.3.2"
@@ -816,29 +836,31 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@kilbergr/pg-sql@npm:^0.1.0-Dev.12":
-  version: 0.1.0-Dev.12
-  resolution: "@kilbergr/pg-sql@npm:0.1.0-Dev.12"
+"@kilbergr/pg-sql@npm:^0.1.0-Dev.17":
+  version: 0.1.0-Dev.17
+  resolution: "@kilbergr/pg-sql@npm:0.1.0-Dev.17"
   peerDependencies:
     "@kilbergr/tagged-types": ^0.1.0-Alpha.3
     pg: ^8.12.0
-  checksum: 10/da1305e6048a5662b2d19cf67986f863a2e74114699b2d084a464d6378711da9a59bfd6c1f99c4093b28f32b9071c0c1d3540ed5bcc1248a69fe6fc11df13f74
+  checksum: 10/47063ac2c9a83ef1af8ba257e415c00aa8379040269e681e9e7f8601b191d83a9f15b4d4fb4058db1390e2aa5998a6354ae61f4695742d1756f5d369c805b927
   languageName: node
   linkType: hard
 
-"@kilbergr/pg-testing@npm:^0.1.0-Dev.2":
-  version: 0.1.0-Dev.2
-  resolution: "@kilbergr/pg-testing@npm:0.1.0-Dev.2"
+"@kilbergr/pg-testing@npm:^0.1.0-Dev.3":
+  version: 0.1.0-Dev.3
+  resolution: "@kilbergr/pg-testing@npm:0.1.0-Dev.3"
   peerDependencies:
-    "@kilbergr/pg-datasource": ^0.1.0-Dev.4
-    "@kilbergr/pg-sql": ^0.1.0-Dev.9
+    "@kilbergr/pg-datasource": ^0.1.0-Dev.19
+    "@kilbergr/pg-sql": ^0.1.0-Dev.16
     "@kilbergr/string": ^0.1.0-Dev.1
     "@kilbergr/tagged-types": ^0.1.0-Alpha.4
     class-transformer: ^0.5.1
     class-validator: ^0.14.1
+    fp-ts: ^2.16.9
+    joi: ^17.13.3
     pg: ^8.12.0
     rxjs: ^7.8.1
-  checksum: 10/4f82312cb0c25d4b75e9ffc71425175f043619004cbaad7aeaae85393e094e08e99294d5520103abfb19954e8f16ab9a22bcb9fc698ee67e0c9619c5b95a514f
+  checksum: 10/cf318166c7ae1764a998981ae0a02d4294bf9b2cad5a923eea7ecb49ddd3fa8800e865d67aba9239dbea9a98fe39d830edd42c14bd197ed71672970285f91f9a
   languageName: node
   linkType: hard
 
@@ -911,6 +933,29 @@ __metadata:
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
   checksum: 10/115e8ceeec6bc69dff2048b35c0ab4f8bbee12d8bb6c1f4af758604586d802b6e669dcb02dda61d078de42c2b4ddce41b3d9e726d7daa6b4b850f4adbf7333ff
+  languageName: node
+  linkType: hard
+
+"@sideway/address@npm:^4.1.5":
+  version: 4.1.5
+  resolution: "@sideway/address@npm:4.1.5"
+  dependencies:
+    "@hapi/hoek": "npm:^9.0.0"
+  checksum: 10/c4c73ac0339504f34e016d3a687118e7ddf197c1c968579572123b67b230be84caa705f0f634efdfdde7f2e07a6e0224b3c70665dc420d8bc95bf400cfc4c998
+  languageName: node
+  linkType: hard
+
+"@sideway/formula@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "@sideway/formula@npm:3.0.1"
+  checksum: 10/8d3ee7f80df4e5204b2cbe92a2a711ca89684965a5c9eb3b316b7051212d3522e332a65a0bb2a07cc708fcd1d0b27fcb30f43ff0bcd5089d7006c7160a89eefe
+  languageName: node
+  linkType: hard
+
+"@sideway/pinpoint@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@sideway/pinpoint@npm:2.0.0"
+  checksum: 10/1ed21800128b2b23280ba4c9db26c8ff6142b97a8683f17639fd7f2128aa09046461574800b30fb407afc5b663c2331795ccf3b654d4b38fa096e41a5c786bf8
   languageName: node
   linkType: hard
 
@@ -2664,6 +2709,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fp-ts@npm:^2.16.9":
+  version: 2.16.9
+  resolution: "fp-ts@npm:2.16.9"
+  checksum: 10/af5c3fa829456da60ed63b5288907868f0df01a7215acfc5697f621a21f76b0a0f7b7c08ac81f2bcf7ecae13a6c6d41047e739a79cf239db19cd49afd7e8e015
+  languageName: node
+  linkType: hard
+
 "fs-minipass@npm:^2.0.0":
   version: 2.1.0
   resolution: "fs-minipass@npm:2.1.0"
@@ -3850,6 +3902,19 @@ __metadata:
   bin:
     jest: bin/jest.js
   checksum: 10/97023d78446098c586faaa467fbf2c6b07ff06e2c85a19e3926adb5b0effe9ac60c4913ae03e2719f9c01ae8ffd8d92f6b262cedb9555ceeb5d19263d8c6362a
+  languageName: node
+  linkType: hard
+
+"joi@npm:^17.13.3":
+  version: 17.13.3
+  resolution: "joi@npm:17.13.3"
+  dependencies:
+    "@hapi/hoek": "npm:^9.3.0"
+    "@hapi/topo": "npm:^5.1.0"
+    "@sideway/address": "npm:^4.1.5"
+    "@sideway/formula": "npm:^3.0.1"
+    "@sideway/pinpoint": "npm:^2.0.0"
+  checksum: 10/4c150db0c820c3a52f4a55c82c1fc5e144a5b5f4da9ffebc7339a15469d1a447ebb427ced446efcb9709ab56bd71a06c4c67c9381bc1b9f9ae63fc7c89209bdf
   languageName: node
   linkType: hard
 
