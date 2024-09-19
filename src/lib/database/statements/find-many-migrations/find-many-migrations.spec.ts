@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/init-declarations */
 import { TestingDatabase } from '@kilbergr/pg-testing';
+import type { migrationFileName } from '../../../migration-file-name';
 import { stringRandom } from '@kilbergr/string';
-import type { migrationFileName } from '../../migration-file-name';
-import { MigrationFileNameStub } from '../../migration-file-name.stub';
-import { CreateMigrationTableQuery } from '../create-migration-table';
+import { MigrationFileNameStub } from '../../../migration-file-name.stub';
+import { CreateMigrationTableStatement } from '../create-migration-table/create-migration-table.statement';
 import * as E from 'fp-ts/lib/Either';
-import { MigrationDirection } from '../../migration';
-import { InsertMigrationQuery } from '../insert-migration';
-import { FindManyMigrationsQuery } from './find-many-migrations.query';
+import { InsertMigrationStatement } from '../insert-migration/insert-migration.statement';
+import { MigrationDirection } from '../../../migration';
+import { FindManyMigrationsStatement } from './find-many-migrations.statement';
 
-describe('(Integration) Find many Migrations query', () => {
+describe('(Integration) Find Many Migrations statement', () => {
   const testingDatabase = new TestingDatabase('FindManyMigrationsQuery');
   let schema: string;
   let table: string;
@@ -29,7 +29,7 @@ describe('(Integration) Find many Migrations query', () => {
     const queryRunner = datasource.createQueryRunner();
 
     const result = await queryRunner
-      .prepare(CreateMigrationTableQuery)
+      .prepare(CreateMigrationTableStatement)
       .setArgs({ schema, table })
       .execute();
 
@@ -38,7 +38,7 @@ describe('(Integration) Find many Migrations query', () => {
     }
 
     const insertResult = await queryRunner
-      .prepare(InsertMigrationQuery)
+      .prepare(InsertMigrationStatement)
       .setArgs({
         schema,
         table,
@@ -66,7 +66,7 @@ describe('(Integration) Find many Migrations query', () => {
     const datasource = testingDatabase.getDataSource();
     const queryRunner = datasource.createQueryRunner();
     const result = await queryRunner
-      .prepare(FindManyMigrationsQuery)
+      .prepare(FindManyMigrationsStatement)
       .setArgs({ schema, table })
       .execute();
     // Assert

@@ -1,12 +1,15 @@
 import { TestingDatabase } from '@kilbergr/pg-testing';
-import { CreateMigrationTableQuery } from './create-migration-table.query';
-import type { CreateMigrationTableArgs } from './create-migration-table.types';
 import { stringRandom } from '@kilbergr/string';
 import * as E from 'fp-ts/lib/Either';
-import { SchemaExistsQuery, TableExistsQuery } from '@kilbergr/pg-datasource';
+import {
+  SchemaExistsStatement,
+  TableExistsStatement,
+} from '@kilbergr/pg-datasource';
+import type { CreateMigrationTable } from '../../configs';
+import { CreateMigrationTableStatement } from './create-migration-table.statement';
 
 describe('(Integration) Create Migration Table query', () => {
-  const testingDatabase = new TestingDatabase('CreateMigrationTableQuery');
+  const testingDatabase = new TestingDatabase('CreateMigrationTableStatement');
 
   beforeAll(async () => {
     await testingDatabase.init();
@@ -20,29 +23,30 @@ describe('(Integration) Create Migration Table query', () => {
     // Arrange
     const datasource = testingDatabase.getDataSource();
     const queryRunner = datasource.createQueryRunner();
-    const args: CreateMigrationTableArgs = {
+    const args: CreateMigrationTable.Args = {
       schema: 'migration_repository_' + stringRandom(),
       table: 'migrations_' + stringRandom(),
     };
     // Act
     const result = await queryRunner
-      .prepare(CreateMigrationTableQuery)
+      .prepare(CreateMigrationTableStatement)
       .setArgs(args)
       .execute();
     const schemaExists = await queryRunner
-      .prepare(SchemaExistsQuery)
+      .prepare(SchemaExistsStatement)
       .setArgs({
         schema: args.schema,
       })
       .execute();
 
     const tableExists = await queryRunner
-      .prepare(TableExistsQuery)
+      .prepare(TableExistsStatement)
       .setArgs({
         schema: args.schema,
         table: args.table,
       })
       .execute();
+
     // Assert
     expect(E.isRight(result)).toBe(true);
     expect(E.isRight(schemaExists)).toBe(true);

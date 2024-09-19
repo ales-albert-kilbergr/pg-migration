@@ -4,10 +4,10 @@ import { MigrationResult } from './migration-result';
 import type { MigrationList } from './migration-list';
 import type { MigrationLogger } from './migration-logger';
 import {
-  CreateMigrationTableQuery,
-  FindLatestSequenceNumberQuery,
-  InsertMigrationQuery,
-} from './queries';
+  CreateMigrationTableStatement,
+  FindLatestSequenceNumberStatement,
+  InsertMigrationStatement,
+} from './database';
 import * as E from 'fp-ts/lib/Either';
 import type { DatabaseError } from 'pg';
 import type { ValidationError } from 'joi';
@@ -87,7 +87,7 @@ export class MigrationRunner {
 
     // Create migration schema and tables if not exists.
     const createMigrationTableResult = await queryRunner
-      .prepare(CreateMigrationTableQuery)
+      .prepare(CreateMigrationTableStatement)
       .setArgs({
         schema: this.config.schema,
         table: this.config.table,
@@ -99,7 +99,7 @@ export class MigrationRunner {
     }
 
     const latestSequenceNumberResult = await queryRunner
-      .prepare(FindLatestSequenceNumberQuery)
+      .prepare(FindLatestSequenceNumberStatement)
       .setArgs(this.config)
       .execute();
 
@@ -174,7 +174,7 @@ export class MigrationRunner {
       }
 
       const migrationInsertResult = await queryRunner
-        .prepare(InsertMigrationQuery)
+        .prepare(InsertMigrationStatement)
         .setArgs({
           table: this.config.table,
           schema: this.config.schema,
@@ -240,7 +240,7 @@ export class MigrationRunner {
       }
 
       const migrationInsertResult = await queryRunner
-        .prepare(InsertMigrationQuery)
+        .prepare(InsertMigrationStatement)
         .setArgs({
           table: this.config.table,
           schema: this.config.schema,

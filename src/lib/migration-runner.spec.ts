@@ -15,10 +15,10 @@ import { MigrationList } from './migration-list';
 import { DatabaseError } from 'pg';
 import * as E from 'fp-ts/lib/Either';
 import {
-  CreateMigrationTableQuery,
-  FindLatestSequenceNumberQuery,
-  InsertMigrationQuery,
-} from './queries';
+  CreateMigrationTableStatement,
+  FindLatestSequenceNumberStatement,
+  InsertMigrationStatement,
+} from './database';
 import type { ValidationError } from 'joi';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -167,18 +167,22 @@ function mockMigrationRunner(
 ): MigrationRunner {
   const mockedQueryRunner = options.queryRunner ?? mockQueryRunner();
 
-  if (!mockedQueryRunner.hasMockedStatement(CreateMigrationTableQuery)) {
-    mockedQueryRunner.mockStatement(CreateMigrationTableQuery).mockVoidResult();
+  if (!mockedQueryRunner.hasMockedStatement(CreateMigrationTableStatement)) {
+    mockedQueryRunner
+      .mockStatement(CreateMigrationTableStatement)
+      .mockVoidResult();
   }
 
-  if (!mockedQueryRunner.hasMockedStatement(FindLatestSequenceNumberQuery)) {
+  if (
+    !mockedQueryRunner.hasMockedStatement(FindLatestSequenceNumberStatement)
+  ) {
     mockedQueryRunner
-      .mockStatement(FindLatestSequenceNumberQuery)
+      .mockStatement(FindLatestSequenceNumberStatement)
       .mockResult(0);
   }
 
-  if (!mockedQueryRunner.hasMockedStatement(InsertMigrationQuery)) {
-    mockedQueryRunner.mockStatement(InsertMigrationQuery).mockVoidResult();
+  if (!mockedQueryRunner.hasMockedStatement(InsertMigrationStatement)) {
+    mockedQueryRunner.mockStatement(InsertMigrationStatement).mockVoidResult();
   }
 
   return new MigrationRunner(
@@ -209,7 +213,7 @@ describe('(Unit) MigrationRunner', () => {
       const table = `migration_table_${stringRandom()}`;
 
       const createMigrationTableQueryMock = queryRunnerMock
-        .mockStatement(CreateMigrationTableQuery)
+        .mockStatement(CreateMigrationTableStatement)
         .mockVoidResult();
 
       const runner = mockMigrationRunner({
@@ -244,7 +248,9 @@ describe('(Unit) MigrationRunner', () => {
       const table = `migration_table_${stringRandom()}`;
       const error = new DatabaseError('Failed', 1, 'error');
 
-      queryRunnerMock.mockStatement(CreateMigrationTableQuery).mockError(error);
+      queryRunnerMock
+        .mockStatement(CreateMigrationTableStatement)
+        .mockError(error);
 
       const runner = mockMigrationRunner({
         loader: mock<MigrationLoader>({
@@ -276,7 +282,7 @@ describe('(Unit) MigrationRunner', () => {
       const error = new DatabaseError('Failed', 1, 'error');
 
       queryRunnerMock
-        .mockStatement(FindLatestSequenceNumberQuery)
+        .mockStatement(FindLatestSequenceNumberStatement)
         .mockError(error);
 
       const runner = mockMigrationRunner({
@@ -354,7 +360,7 @@ describe('(Unit) MigrationRunner', () => {
     const migrationList = MigrationList.from(migrationOne, migrationTwo);
     const mockedQueryRunner = mockQueryRunner();
     mockedQueryRunner
-      .mockStatement(FindLatestSequenceNumberQuery)
+      .mockStatement(FindLatestSequenceNumberStatement)
       .mockResult(1);
 
     const runner = mockMigrationRunner({
@@ -383,7 +389,7 @@ describe('(Unit) MigrationRunner', () => {
     const migrationList = MigrationList.from(migrationOne, migrationTwo);
     const mockedQueryRunner = mockQueryRunner();
     mockedQueryRunner
-      .mockStatement(FindLatestSequenceNumberQuery)
+      .mockStatement(FindLatestSequenceNumberStatement)
       .mockResult(2);
     const runner = mockMigrationRunner({
       loader: mock<MigrationLoader>({
@@ -414,7 +420,7 @@ describe('(Unit) MigrationRunner', () => {
     const migrationList = MigrationList.from(migrationOne, migrationTwo);
     const mockedQueryRunner = mockQueryRunner();
     mockedQueryRunner
-      .mockStatement(FindLatestSequenceNumberQuery)
+      .mockStatement(FindLatestSequenceNumberStatement)
       .mockResult(2);
     const runner = mockMigrationRunner({
       loader: mock<MigrationLoader>({
@@ -441,7 +447,7 @@ describe('(Unit) MigrationRunner', () => {
     const migrationList = MigrationList.from(migrationOne, migrationTwo);
     const mockedQueryRunner = mockQueryRunner();
     mockedQueryRunner
-      .mockStatement(FindLatestSequenceNumberQuery)
+      .mockStatement(FindLatestSequenceNumberStatement)
       .mockResult(2);
     const runner = mockMigrationRunner({
       loader: mock<MigrationLoader>({

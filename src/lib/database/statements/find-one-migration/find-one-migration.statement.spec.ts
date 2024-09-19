@@ -1,50 +1,41 @@
 /* eslint-disable @typescript-eslint/init-declarations */
 import { TestingDatabase } from '@kilbergr/pg-testing';
 import { stringRandom } from '@kilbergr/string';
-import { CreateMigrationTableQuery } from '../create-migration-table';
 import * as E from 'fp-ts/lib/Either';
-import { MigrationFileNameStub } from '../../migration-file-name.stub';
-import { InsertMigrationQuery } from './insert-migration.query';
-import { MigrationDirection } from '../../migration';
-import { FindOneQuery } from '../find-one-migration';
-import { MigrationRecord } from '../../migration-record';
+import { MigrationFileNameStub } from '../../../migration-file-name.stub';
+import { MigrationDirection } from '../../../migration';
+import { MigrationRecord } from '../../../migration-record';
+import type { migrationFileName } from '../../../migration-file-name';
+import { CreateMigrationTableStatement } from '../create-migration-table/create-migration-table.statement';
+import { InsertMigrationStatement } from '../insert-migration/insert-migration.statement';
+import { FindOneMigrationStatement } from './find-one-migration.statement';
 
-describe('(Integration) Insert Migration query', () => {
-  const testingDatabase = new TestingDatabase('InsertMigrationQuery');
+describe('(Integration) Find one Migration query', () => {
+  const testingDatabase = new TestingDatabase('InsertMigrationStatement');
   let schema: string;
   let table: string;
+  let fileName: migrationFileName;
 
   beforeAll(async () => {
     await testingDatabase.init();
     schema = 'migration_repository_' + stringRandom();
     table = 'migrations_' + stringRandom();
+    fileName = MigrationFileNameStub();
 
     const datasource = testingDatabase.getDataSource();
     const queryRunner = datasource.createQueryRunner();
 
     const result = await queryRunner
-      .prepare(CreateMigrationTableQuery)
+      .prepare(CreateMigrationTableStatement)
       .setArgs({ schema, table })
       .execute();
 
     if (E.isLeft(result)) {
       throw new Error('Failed to create table');
     }
-  });
 
-  afterAll(async () => {
-    await testingDatabase.close();
-  });
-
-  it('should insert a record into the table', async () => {
-    // Arrange
-    const datasource = testingDatabase.getDataSource();
-    const queryRunner = datasource.createQueryRunner();
-    const fileName = MigrationFileNameStub();
-
-    // Act
-    await queryRunner
-      .prepare(InsertMigrationQuery)
+    const insertResult = await queryRunner
+      .prepare(InsertMigrationStatement)
       .setArgs({
         schema,
         table,
@@ -59,8 +50,24 @@ describe('(Integration) Insert Migration query', () => {
         ],
       })
       .execute();
+
+    if (E.isLeft(insertResult)) {
+      throw new Error('Failed to insert record');
+    }
+  });
+
+  afterAll(async () => {
+    await testingDatabase.close();
+  });
+
+  it('should find an existing migration record', async () => {
+    // Arrange
+    const datasource = testingDatabase.getDataSource();
+    const queryRunner = datasource.createQueryRunner();
+
+    // Act
     const record = await queryRunner
-      .prepare(FindOneQuery)
+      .prepare(FindOneMigrationStatement)
       .setArgs({
         schema,
         table,
@@ -85,15 +92,15 @@ describe('(Integration) Insert Migration query', () => {
     // Arrange
     const datasource = testingDatabase.getDataSource();
     const queryRunner = datasource.createQueryRunner();
-    const fileName = MigrationFileNameStub();
+    const notExistingFileName = MigrationFileNameStub();
 
     // Act
     const record = await queryRunner
-      .prepare(FindOneQuery)
+      .prepare(FindOneMigrationStatement)
       .setArgs({
         schema,
         table,
-        fileName,
+        fileName: notExistingFileName,
       })
       .execute();
     // Assert

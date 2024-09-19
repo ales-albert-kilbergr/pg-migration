@@ -2,18 +2,22 @@ import {
   InsertColumns,
   InsertInto,
   InsertValues,
-  sql,
   type QueryConfig,
+  sql,
 } from '@kilbergr/pg-sql';
-import type { InsertMigrationArgs } from './insert-migration.types';
+import type { SetOptional } from 'type-fest';
+import type { MigrationRecord } from '../../../migration-record';
 import { toSnakeCase } from '@kilbergr/string';
-import {
-  processResultFlow,
-  reduceToVoid,
-  SqlStatement,
-} from '@kilbergr/pg-datasource';
 
-export function build(args: InsertMigrationArgs): QueryConfig {
+export declare namespace InsertMigration {
+  export interface Args {
+    schema: string;
+    table: string;
+    migrations: SetOptional<MigrationRecord, 'createdAt'>[];
+  }
+}
+
+export function InsertMigration(args: InsertMigration.Args): QueryConfig {
   const columns = Object.keys(args.migrations[0]);
 
   const queryConfig = sql`
@@ -24,8 +28,3 @@ export function build(args: InsertMigrationArgs): QueryConfig {
 
   return queryConfig;
 }
-
-export const InsertMigrationQuery = SqlStatement.create({
-  build,
-  processResult: processResultFlow(reduceToVoid()),
-});

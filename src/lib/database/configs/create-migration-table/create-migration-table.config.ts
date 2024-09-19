@@ -1,15 +1,18 @@
-import type { CreateMigrationTableArgs } from './create-migration-table.types';
-import { type QueryConfig, Identifier, sql } from '@kilbergr/pg-sql';
-import {
-  SqlStatement,
-  processResultFlow,
-  reduceToVoid,
-} from '@kilbergr/pg-datasource';
+import { Identifier, type QueryConfig, sql } from '@kilbergr/pg-sql';
 
-export function build(args: CreateMigrationTableArgs): QueryConfig {
+export declare namespace CreateMigrationTable {
+  export interface Args {
+    schema: string;
+    table: string;
+  }
+}
+
+export function CreateMigrationTable(
+  args: CreateMigrationTable.Args,
+): QueryConfig {
   const pkName = `pk_${args.schema}_migration_log`;
 
-  const queryConfig = sql`
+  return sql`
     CREATE SCHEMA IF NOT EXISTS ${Identifier(args.schema)};
 
     CREATE TABLE IF NOT EXISTS ${Identifier(`${args.schema}.${args.table}`)} (
@@ -23,11 +26,4 @@ export function build(args: CreateMigrationTableArgs): QueryConfig {
       CONSTRAINT ${Identifier(pkName)} PRIMARY KEY (sequence_number)
     );
   `;
-
-  return queryConfig;
 }
-
-export const CreateMigrationTableQuery = SqlStatement.create({
-  build,
-  processResult: processResultFlow(reduceToVoid()),
-});

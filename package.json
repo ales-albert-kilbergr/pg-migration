@@ -54,8 +54,8 @@
     "zx": "^8.1.4"
   },
   "dependencies": {
-    "@kilbergr/pg-datasource": "^0.1.0-Dev.25",
-    "@kilbergr/pg-sql": "^0.1.0-Dev.17",
+    "@kilbergr/pg-datasource": "^0.1.0-Dev.28",
+    "@kilbergr/pg-sql": "^0.1.0-Dev.19",
     "@kilbergr/string": "^0.1.0-Dev.1",
     "@kilbergr/tagged-types": "^0.1.0-Alpha.4",
     "class-transformer": "^0.5.1",
