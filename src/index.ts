@@ -5,4 +5,3 @@ export * from './lib/migration-record';
 export * from './lib/migration-runner';
 export * from './lib/migration';
 export * from './lib/migration-webpack-loader';
-export * from './lib/queries';
