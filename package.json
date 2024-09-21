@@ -1,7 +1,7 @@
 {
   "name": "@kilbergr/pg-migration",
   "description": "Postgres Migration",
-  "version": "0.1.0-Dev.3",
+  "version": "0.1.0-Dev.4",
   "author": {
     "name": "Kilbergr",
     "email": "ales.albert@kilbergr.eu"
