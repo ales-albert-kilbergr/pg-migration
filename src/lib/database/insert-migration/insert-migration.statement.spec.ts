@@ -2,12 +2,12 @@
 import { TestingDatabase } from '@kilbergr/pg-testing';
 import { stringRandom } from '@kilbergr/string';
 import * as E from 'fp-ts/lib/Either';
-import { MigrationFileNameStub } from '../../../migration-file-name.stub';
-import { MigrationDirection } from '../../../migration';
-import { MigrationRecord } from '../../../migration-record';
-import { CreateMigrationTableStatement } from '../create-migration-table/create-migration-table.statement';
+import { MigrationFileNameStub } from '../../migration-file-name.stub';
+import { MigrationDirection } from '../../migration';
+import { MigrationRecord } from '../../migration-record';
+import { CreateMigrationTableStatement } from '../create-migration-table';
 import { InsertMigrationStatement } from './insert-migration.statement';
-import { FindOneMigrationStatement } from '../find-one-migration/find-one-migration.statement';
+import { FindOneMigrationStatement } from '../find-one-migration';
 
 describe('(Integration) Insert Migration query', () => {
   const testingDatabase = new TestingDatabase('InsertMigrationStatement');

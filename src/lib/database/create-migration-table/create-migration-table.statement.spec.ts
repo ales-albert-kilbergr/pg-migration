@@ -5,7 +5,7 @@ import {
   SchemaExistsStatement,
   TableExistsStatement,
 } from '@kilbergr/pg-datasource';
-import type { CreateMigrationTable } from '../../configs';
+import type { CreateMigrationTable } from './create-migration-table.config';
 import { CreateMigrationTableStatement } from './create-migration-table.statement';
 
 describe('(Integration) Create Migration Table query', () => {

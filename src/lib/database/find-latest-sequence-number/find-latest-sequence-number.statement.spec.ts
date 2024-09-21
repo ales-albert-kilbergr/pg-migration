@@ -1,7 +1,7 @@
 import { mock } from 'jest-mock-extended';
 import type { QueryRunner } from '@kilbergr/pg-datasource';
 import * as E from 'fp-ts/lib/Either';
-import type { FindLatestSequenceNumber } from '../../configs';
+import type { FindLatestSequenceNumber } from './find-latest-sequence-number.config';
 import { FindLatestSequenceNumberStatement } from './find-latest-sequence-number.statement';
 
 describe('(Unit) FindLatestSequenceNumberStatement', () => {

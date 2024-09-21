@@ -6,7 +6,7 @@ import {
   sql,
 } from '@kilbergr/pg-sql';
 import type { SetOptional } from 'type-fest';
-import type { MigrationRecord } from '../../../migration-record';
+import type { MigrationRecord } from '../../migration-record';
 import { toSnakeCase } from '@kilbergr/string';
 
 export declare namespace InsertMigration {

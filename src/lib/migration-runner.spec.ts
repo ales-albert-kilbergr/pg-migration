@@ -24,21 +24,19 @@ import type { ValidationError } from 'joi';
 // eslint-disable-next-line @typescript-eslint/no-namespace
 class QueryMock<
   ARGS extends object,
-  RESULT = QueryRunner.Result,
-  PROCESSED_ERROR = DatabaseError,
+  DATA = QueryRunner.Result,
+  ERROR = DatabaseError,
 > {
-  public readonly statement: SqlStatement<ARGS, RESULT, PROCESSED_ERROR>;
+  public readonly statement: SqlStatement<ARGS, DATA, ERROR>;
 
   private mockImplementationFn: jest.Mock<
-    Promise<
-      E.Either<DatabaseError | ValidationError | PROCESSED_ERROR, RESULT>
-    >,
+    Promise<E.Either<DatabaseError | ValidationError | ERROR, DATA>>,
     [ARGS]
-  > = jest.fn<Promise<E.Either<PROCESSED_ERROR, RESULT>>, [ARGS]>();
+  > = jest.fn<Promise<E.Either<ERROR, DATA>>, [ARGS]>();
 
   private args: ARGS = {} as ARGS;
 
-  public constructor(statement: SqlStatement<ARGS, RESULT, PROCESSED_ERROR>) {
+  public constructor(statement: SqlStatement<ARGS, DATA, ERROR>) {
     this.statement = statement;
   }
 
@@ -62,9 +60,7 @@ class QueryMock<
     return this.args[key];
   }
 
-  public mockImplementation(
-    fn: (args: ARGS) => E.Either<PROCESSED_ERROR, RESULT>,
-  ): this {
+  public mockImplementation(fn: (args: ARGS) => E.Either<ERROR, DATA>): this {
     this.mockImplementationFn = jest
       .fn()
       .mockImplementation(async (args: ARGS) => {
@@ -74,26 +70,26 @@ class QueryMock<
     return this;
   }
 
-  public mockResolveValue(value: E.Either<PROCESSED_ERROR, RESULT>): this {
+  public mockResolveValue(value: E.Either<ERROR, DATA>): this {
     return this.mockImplementation(() => value);
   }
 
-  public mockError(error: PROCESSED_ERROR): this {
+  public mockError(error: ERROR): this {
     // We do test what the statement is expected to return, not the
     // result processing flow of the statement itself.
     return this.mockResolveValue(E.left(error));
   }
 
-  public mockResult(result: RESULT): this {
+  public mockResult(result: DATA): this {
     return this.mockResolveValue(E.right(result));
   }
 
   public mockVoidResult(): this {
-    return this.mockResult(void 0 as unknown as RESULT);
+    return this.mockResult(void 0 as unknown as DATA);
   }
 
   public async execute(): Promise<
-    E.Either<PROCESSED_ERROR | DatabaseError | ValidationError, RESULT>
+    E.Either<ERROR | DatabaseError | ValidationError, DATA>
   > {
     return this.mockImplementationFn(this.args);
   }
@@ -102,14 +98,18 @@ class QueryMock<
 type QueryRunnerMock = MockProxy<QueryRunner> & {
   mockStatement: <
     ARGS extends object,
-    RESULT = QueryRunner.Result,
-    PROCESSED_ERROR = DatabaseError,
+    DATA = QueryRunner.Result,
+    ERROR = DatabaseError,
   >(
-    statement: SqlStatement<ARGS, RESULT, PROCESSED_ERROR>,
-  ) => QueryMock<ARGS, RESULT, PROCESSED_ERROR>;
+    statement: SqlStatement<ARGS, DATA, ERROR>,
+  ) => QueryMock<ARGS, DATA, ERROR>;
 
-  hasMockedStatement: (
-    statement: SqlStatement<object, unknown, unknown>,
+  hasMockedStatement: <
+    ARGS extends object,
+    DATA = QueryRunner.Result,
+    ERROR = DatabaseError,
+  >(
+    statement: SqlStatement<ARGS, DATA, ERROR>,
   ) => boolean;
 };
 
@@ -132,11 +132,11 @@ function mockQueryRunner(): QueryRunnerMock {
   return Object.assign(mockedQueryRunner, {
     mockStatement: function mockStatement<
       ARGS extends object,
-      RESULT = QueryRunner.Result,
-      PROCESSED_ERROR = DatabaseError,
+      DATA = QueryRunner.Result,
+      ERROR = DatabaseError,
     >(
-      statement: SqlStatement<ARGS, RESULT, PROCESSED_ERROR>,
-    ): QueryMock<ARGS, RESULT, PROCESSED_ERROR> {
+      statement: SqlStatement<ARGS, DATA, ERROR>,
+    ): QueryMock<ARGS, DATA, ERROR> {
       const queryMock = new QueryMock(statement);
       mockedStatements.set(statement, queryMock);
       return queryMock;
@@ -147,7 +147,7 @@ function mockQueryRunner(): QueryRunnerMock {
     ): boolean {
       return mockedStatements.has(statement);
     },
-  });
+  }) as any;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace

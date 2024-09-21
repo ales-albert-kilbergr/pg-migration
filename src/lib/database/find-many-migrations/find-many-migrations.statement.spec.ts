@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/init-declarations */
 import { TestingDatabase } from '@kilbergr/pg-testing';
-import type { migrationFileName } from '../../../migration-file-name';
+import type { migrationFileName } from '../../migration-file-name';
 import { stringRandom } from '@kilbergr/string';
-import { MigrationFileNameStub } from '../../../migration-file-name.stub';
+import { MigrationFileNameStub } from '../../migration-file-name.stub';
 import { CreateMigrationTableStatement } from '../create-migration-table/create-migration-table.statement';
 import * as E from 'fp-ts/lib/Either';
-import { InsertMigrationStatement } from '../insert-migration/insert-migration.statement';
-import { MigrationDirection } from '../../../migration';
+import { InsertMigrationStatement } from '../insert-migration';
+import { MigrationDirection } from '../../migration';
 import { FindManyMigrationsStatement } from './find-many-migrations.statement';
 
 describe('(Integration) Find Many Migrations statement', () => {
